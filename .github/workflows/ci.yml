@@ -1,0 +1,120 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Dart ${{ matrix.dart-sdk }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        dart-sdk:
+          - '3.5.3'
+          - stable
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7.0.1
+      - name: Set up Dart
+        uses: dart-lang/setup-dart@v1.8.0
+        with:
+          sdk: ${{ matrix.dart-sdk }}
+      - name: Resolve dependencies
+        run: dart pub get
+      - name: Check formatting
+        run: dart format --output=none --set-exit-if-changed .
+      - name: Analyze
+        run: dart analyze
+      - name: Test
+        run: dart test
+      - name: Verify generated dictionaries
+        run: dart run tool/generate_dictionary.dart --check
+
+  lower-bound:
+    name: Dart 3.5.3 with downgraded dependencies
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7.0.1
+      - name: Set up Dart 3.5.3
+        uses: dart-lang/setup-dart@v1.8.0
+        with:
+          sdk: '3.5.3'
+      - name: Resolve lowest allowed direct dependencies
+        run: dart pub downgrade benchmark_harness lints test
+      - name: Analyze
+        run: dart analyze
+      - name: Test
+        run: dart test
+      - name: Verify generated dictionaries
+        run: dart run tool/generate_dictionary.dart --check
+
+  release-smoke:
+    name: Stable release smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7.0.1
+      - name: Set up stable Dart
+        uses: dart-lang/setup-dart@v1.8.0
+        with:
+          sdk: stable
+      - name: Resolve dependencies
+        run: dart pub get
+      - name: Generate API documentation
+        run: dart doc
+      - name: Run benchmark smoke test
+        run: dart run benchmark/profanity_benchmark.dart
+      - name: Compile web smoke test
+        shell: bash
+        run: |
+          set -euo pipefail
+          trap 'rm -rf build' EXIT INT TERM
+          dart compile js example/main.dart -o build/web-smoke/main.dart.js
+          rm -rf build
+          trap - EXIT INT TERM
+      - name: Remove generated API documentation
+        run: rm -rf doc
+      - name: Validate archive prerequisites
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f LICENSE
+          test -f THIRD_PARTY_NOTICES.md
+          test -f CHANGELOG.md
+          if find data/upstream -type f -print -quit 2>/dev/null | grep -q .; then
+            echo 'Raw upstream data must not be present in a release checkout.' >&2
+            exit 1
+          fi
+          if find . -path ./.git -prune -o -path ./.dart_tool -prune -o \
+            -type f -print | grep -Eiq '(^|/)[^/]*(credential|token|secret)[^/]*$'; then
+            echo 'Credential, token, or secret-like files must not be present.' >&2
+            exit 1
+          fi
+          test ! -d doc
+      - name: Validate and inspect package archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$(mktemp)"
+          trap 'rm -f "$output"' EXIT INT TERM
+          dart pub publish --dry-run 2>&1 | tee "$output"
+          grep -F 'Package has 0 warnings.' "$output"
+          grep -F 'THIRD_PARTY_NOTICES.md' "$output"
+          grep -F 'dictionary_strict_data.g.dart' "$output"
+          grep -F 'dictionary_lenient_data.g.dart' "$output"
+          ! grep -Ei '^[│ ]*[├└]── (data|tool|benchmark|doc|docs|evidence|\.omo|build|pubspec\.lock|.*(credential|token|secret).*|service-account.*|.*\.(pem|p12|key))( |/|$)' "$output"
