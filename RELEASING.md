@@ -37,7 +37,8 @@ fvm dart run tool/generate_dictionary.dart --check
 rm -rf doc build
 fvm dart doc
 fvm dart run benchmark/profanity_benchmark.dart
-fvm dart compile js example/main.dart -o build/web-smoke/main.dart.js
+fvm dart compile js -O4 website/main.dart -o build/website/main.dart.js
+test -s build/website/main.dart.js
 rm -rf doc build
 ```
 
@@ -82,19 +83,60 @@ grep -F 'Package has 0 warnings.' "$output"
 grep -F 'THIRD_PARTY_NOTICES.md' "$output"
 grep -F 'dictionary_strict_data.g.dart' "$output"
 grep -F 'dictionary_lenient_data.g.dart' "$output"
-! grep -Ei '^[│ ]*[├└]── (data|tool|benchmark|doc|docs|evidence|\.omo|build|pubspec\.lock|.*(credential|token|secret).*|service-account.*|.*\.(pem|p12|key))( |/|$)' "$output"
+grep -F 'DESIGN.md' "$output"
+grep -F 'components.css' "$output"
+grep -F 'index.html' "$output"
+grep -F 'main.dart' "$output"
+grep -F 'responsive.css' "$output"
+grep -F 'style.css' "$output"
+! grep -Ei '^[│ ]*[├└]── (data|tool|benchmark|doc|docs|evidence|\.omo|build|pubspec\.lock|.*\.(js|mjs|wasm)(\.[^ /]+)*|.*\.(map|deps)|.*(credential|token|secret).*|service-account.*|.*\.(pem|p12|key))( |/|$)' "$output"
 rm -f "$output"
 trap - EXIT INT TERM
 ```
 
 Read the complete file list. It must contain the public libraries, generated
-dictionaries, README, changelog, MIT code license, and third-party notices. It
-must exclude raw data, `data/`, `tool/`, `benchmark/`, `.omo/`, `doc/`,
-`docs/`, tests, dartdoc/build output, lockfiles, credentials, tokens, secrets,
-and private keys. Resolve every
-warning and rerun the dry run after any metadata or archive change.
+dictionaries, README, changelog, MIT code license, third-party notices, and
+exactly the website sources `website/index.html`, `website/style.css`,
+`website/components.css`, `website/responsive.css`, `website/main.dart`, and
+`website/DESIGN.md`. It must exclude raw data, `data/`,
+`tool/`, `benchmark/`, `.omo/`, `doc/`, `docs/`, tests, dartdoc/build output,
+lockfiles, credentials, tokens, secrets, private keys, screenshots, temporary
+assets, and compiled website JavaScript or generated compiler sidecars. Pages compilation must
+write only under ignored `build/website`; never copy generated output back into
+`website/`. Resolve every warning and rerun the dry run after any metadata or
+archive change.
 
-## 4. External write gates
+## 4. Verify the Pages build locally
+
+```sh
+rm -rf build/compiler build/website
+mkdir -p build/compiler build/website
+fvm dart compile js -O4 website/main.dart -o build/compiler/main.dart.js
+install -m 0644 \
+  website/index.html \
+  website/style.css \
+  website/components.css \
+  website/responsive.css \
+  build/website/
+install -m 0644 build/compiler/main.dart.js build/website/main.dart.js
+rm -rf build/compiler
+test -s build/website/index.html
+test -s build/website/style.css
+test -s build/website/components.css
+test -s build/website/responsive.css
+test -s build/website/main.dart.js
+test -z "$(find build/website -type f \
+  \( -name '*.map' -o -name '*.deps' -o -name '*.dart.js.*' \) \
+  -print -quit)"
+rm -rf build
+```
+
+After a separately approved push to `main`, the Pages workflow builds this
+same artifact and deploys it. Verify
+`https://beomq.github.io/korean-profanity/` before publication. A workflow run
+creates an external Pages write and is not authorized by these local checks.
+
+## 5. External write gates
 
 Stop here unless the maintainer separately authorizes each exact external
 write. Passing local checks does not authorize repository creation, issue
@@ -103,8 +145,10 @@ gates or add publishing credentials to this repository.
 
 1. Create or verify `https://github.com/beomq/korean-profanity` and review the
    exact source commit.
-2. Separately approve any commit and push.
-3. Separately approve creation and push of tag `v0.1.0`.
+2. Separately approve any commit and push to `main`; this push triggers the
+   Pages deployment.
+3. Verify the Pages workflow and live demo, then separately approve creation
+   and push of tag `v0.1.0`.
 4. Rerun this entire checklist from that tag, separately approve publication,
    then run interactive `fvm dart pub publish` without `--force`.
 5. Verify pub.dev shows `korean_profanity` 0.1.0 before separately approving a

@@ -1,7 +1,7 @@
 name: korean_profanity
 description: A lightweight, pure-Dart foundation for detecting Korean profanity.
 version: 0.1.0
-homepage: https://github.com/beomq/korean-profanity
+homepage: https://beomq.github.io/korean-profanity/
 repository: https://github.com/beomq/korean-profanity
 issue_tracker: https://github.com/beomq/korean-profanity/issues
 topics:

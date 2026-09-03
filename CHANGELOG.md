@@ -1,5 +1,10 @@
 ## 0.1.0
 
+First unpublished release.
+
+- Added a browser demo built directly against the strict package API, with
+  website sources included in the package archive and deployment through
+  GitHub Pages.
 - Added immutable synchronous APIs for profanity detection, detailed matches,
   masking, and constructor-only dictionary customization.
 - Added conservative Korean evasion handling with exact UTF-16 source spans,
