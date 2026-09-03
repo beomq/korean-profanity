@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="서버 전송 없이 한국어 욕설을 감지하고 원문 범위까지 확인하는 순수 Dart 패키지입니다.">
+  <meta name="theme-color" content="oklch(1 0 0)">
+  <title>korean_profanity | 앱 안에서 검사하는 한국어 욕설 필터</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16'/%3E%3C/svg%3E">
+  <link rel="canonical" href="https://beomq.github.io/korean-profanity/">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="components.css">
+  <link rel="stylesheet" href="responsive.css">
+  <script defer src="main.dart.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">본문으로 건너뛰기</a>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="wordmark" href="#top" aria-label="korean_profanity 처음으로">korean_<strong>profanity</strong></a>
+      <nav aria-label="주요 탐색">
+        <a href="#demo">검사기</a>
+        <a href="#api">API</a>
+        <a href="#limits">범위와 한계</a>
+      </nav>
+      <span class="header-mark" aria-hidden="true"></span>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero container" id="top" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <div class="document-label"><span>검출 증거지</span><span>STRICT / 0.1.0</span></div>
+        <h1 id="hero-title">보내기 전에,<br>앱 안에서 걸러냅니다.</h1>
+        <p class="hero-description">서버 전송 없이 한국어 욕설을 감지하고, 원문 범위까지 확인해 마스킹하세요.</p>
+        <ul class="facts" aria-label="패키지 핵심 정보">
+          <li>순수 Dart</li>
+          <li>실행 의존성 0</li>
+          <li>동기식 API</li>
+        </ul>
+        <div class="hero-actions">
+          <a class="button button-primary" href="#demo">직접 검사하기</a>
+          <span class="shortcut">단축키 <kbd>⌘</kbd>/<kbd>Ctrl</kbd> + <kbd>K</kbd></span>
+        </div>
+      </div>
+
+      <aside class="hero-docket" aria-label="검사 방식 요약">
+        <div class="docket-top"><span>KP / EVIDENCE</span><span>01</span></div>
+        <p class="docket-stamp">LOCAL<br>ONLY</p>
+        <div class="redaction" aria-hidden="true">
+          <span class="redaction-line redaction-line-long"></span>
+          <span class="redaction-line"></span>
+          <span class="redaction-line redaction-line-short"></span>
+        </div>
+        <dl class="docket-meta">
+          <div><dt>처리 위치</dt><dd>현재 프로세스</dd></div>
+          <div><dt>결과 형식</dt><dd>원문 UTF-16 범위</dd></div>
+          <div><dt>기본 사전</dt><dd>strict</dd></div>
+        </dl>
+      </aside>
+    </section>
+
+    <section class="install-strip" aria-labelledby="install-title">
+      <div class="container install-inner">
+        <div>
+          <p class="section-index">설치 / 01</p>
+          <h2 id="install-title">한 줄로 추가합니다.</h2>
+        </div>
+        <div class="command-line">
+          <code id="install-command">dart pub add korean_profanity</code>
+          <button class="copy-button" type="button" data-copy-target="install-command">
+            <span>명령어 복사</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section class="section container" id="demo" aria-labelledby="demo-title">
+      <header class="section-heading">
+        <p class="section-index">실제 검사 / 02</p>
+        <div>
+          <h2 id="demo-title">입력과 증거를 함께 봅니다.</h2>
+          <p>페이지의 검사는 패키지에 포함된 실제 <code>KoreanProfanityFilter</code> strict 사전을 호출합니다.</p>
+        </div>
+      </header>
+
+      <div class="demo-layout">
+        <form class="checker" id="checker-form">
+          <label for="checker-input">검사할 한국어 문장</label>
+          <textarea id="checker-input" rows="5" spellcheck="false" autocomplete="off">씨 11 발</textarea>
+          <p class="field-hint">입력은 이 페이지 안에서만 처리됩니다. 프리셋은 입력만 바꾸며, 결과는 검사 버튼을 눌렀을 때 갱신됩니다.</p>
+          <div class="preset-group" role="group" aria-label="검사 예시">
+            <button type="button" data-preset="씨 11 발">씨 11 발</button>
+            <button type="button" data-preset="시간">시간</button>
+            <button type="button" data-preset="시😀발">시😀발</button>
+          </div>
+          <button class="button button-signal" type="submit">문장 검사하기</button>
+        </form>
+
+        <section class="result-sheet" aria-labelledby="result-title">
+          <div class="result-header">
+            <div>
+              <p class="section-index">RESULT / STRICT</p>
+              <h3 id="result-title">검사 결과</h3>
+            </div>
+            <span id="result-badge" class="result-badge">검사 전</span>
+          </div>
+          <p id="demo-status" class="status" role="status" aria-live="polite" aria-atomic="true">검사 버튼을 누르면 결과를 표시합니다.</p>
+          <dl class="result-summary">
+            <div><dt>contains</dt><dd id="contains-output">대기</dd></div>
+            <div><dt>findAll</dt><dd id="count-output">0건</dd></div>
+            <div><dt>mask</dt><dd><code id="mask-output">대기</code></dd></div>
+          </dl>
+          <div id="match-detail" class="match-detail" hidden>
+            <p class="detail-title">첫 일치 증거</p>
+            <dl>
+              <div><dt>원문 조각</dt><dd><code id="match-slice"></code></dd></div>
+              <div><dt>사전 단어</dt><dd id="match-word"></dd></div>
+              <div><dt>UTF-16 범위</dt><dd id="match-range"></dd></div>
+              <div><dt>등급</dt><dd id="match-tier"></dd></div>
+              <div><dt>간격 통과</dt><dd id="match-gap"></dd></div>
+            </dl>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section class="section section-ruled" id="api" aria-labelledby="api-title">
+      <div class="container">
+        <header class="section-heading">
+          <p class="section-index">API / 03</p>
+          <div>
+            <h2 id="api-title">세 동작, 같은 필터.</h2>
+            <p>불리언 확인부터 원문 범위와 마스킹까지 하나의 불변 필터 인스턴스에서 동기식으로 실행합니다.</p>
+          </div>
+        </header>
+        <div class="api-list">
+          <article class="api-row">
+            <code>contains(text)</code>
+            <h3>포함 여부</h3>
+            <p>허용된 일치가 하나라도 있는지 <code>bool</code>로 반환합니다.</p>
+          </article>
+          <article class="api-row">
+            <code>findAll(text)</code>
+            <h3>모든 일치</h3>
+            <p>겹치는 결과를 유지하고, 원문 순서의 불변 목록과 UTF-16 범위를 반환합니다.</p>
+          </article>
+          <article class="api-row">
+            <code>mask(text)</code>
+            <h3>원문 마스킹</h3>
+            <p>겹치거나 맞닿은 범위를 합친 뒤 각 원문 스칼라를 한 개의 마스크 문자로 바꿉니다.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section container" id="limits" aria-labelledby="boundary-title">
+      <header class="section-heading">
+        <p class="section-index">경계 / 04</p>
+        <div>
+          <h2 id="boundary-title">무엇을 잇고, 어디서 멈추는지.</h2>
+          <p>정규화는 의도적으로 좁습니다. 내부 공백과 숫자는 제한적으로 잇지만, 이모지는 경계로 남깁니다.</p>
+        </div>
+      </header>
+      <div class="table-wrap" tabindex="0" role="region" aria-label="strict 경계 예시 표">
+        <table>
+          <thead><tr><th scope="col">입력</th><th scope="col">strict 결과</th><th scope="col">근거</th></tr></thead>
+          <tbody>
+            <tr><th scope="row"><code>씨1발</code></th><td><span class="detected">검출</span></td><td>내부 숫자를 간격으로 처리</td></tr>
+            <tr><th scope="row"><code>씨 11 발</code></th><td><span class="detected">검출</span></td><td>내부 공백과 숫자를 지나 <span class="keep-together">일치</span></td></tr>
+            <tr><th scope="row"><code>시간</code></th><td>미검출</td><td>일반 단어 allowlist 보호</td></tr>
+            <tr><th scope="row"><code>시😀발</code></th><td>미검출</td><td>이모지는 하드 경계</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section proof-band" aria-labelledby="local-title">
+      <div class="container proof-layout">
+        <div class="proof-lead">
+          <p class="section-index">로컬 실행 / 05</p>
+          <h2 id="local-title">문장은 패키지 밖으로 <span class="keep-together">나가지 않습니다.</span></h2>
+        </div>
+        <div class="proof-copy">
+          <p>검출과 마스킹은 오프라인, 동기식으로 실행됩니다. 이 패키지 자체는 입력을 전송하지 않습니다. 다만 앱의 로깅이나 네트워크 코드는 별도이므로 직접 점검해야 합니다.</p>
+          <dl class="size-list">
+            <div><dt>실행 의존성</dt><dd>0</dd></div>
+            <div><dt>패키지 압축 크기</dt><dd>30–32 KB</dd></div>
+            <div><dt>strict 웹 gzip 증가분</dt><dd>23–26 KB</dd></div>
+          </dl>
+          <p class="measure-note">크기는 0.1.0 릴리스 측정치입니다. 컴파일러 트리 셰이킹과 소비 코드 경로에 따라 달라질 수 있습니다.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section container" aria-labelledby="quick-title">
+      <header class="section-heading">
+        <p class="section-index">빠른 시작 / 06</p>
+        <div>
+          <h2 id="quick-title">검출하고, <span class="keep-together">확인하고, 가립니다.</span></h2>
+          <p>기본 import에는 오탐을 줄이기 위한 strict 사전이 포함됩니다.</p>
+        </div>
+      </header>
+      <figure class="code-specimen">
+        <figcaption>
+          <span>main.dart</span>
+          <button class="copy-button copy-button-inverse" type="button" data-copy-target="quick-code"><span>코드 복사</span></button>
+        </figcaption>
+        <pre><code id="quick-code">import 'package:korean_profanity/korean_profanity.dart';
+
+void main() {
+  final filter = KoreanProfanityFilter();
+  final matches = filter.findAll('씨 11 발');
+
+  print(filter.contains('씨 11 발')); // true
+  print(matches.first.start);        // 0
+  print(matches.first.end);          // 6
+  print(filter.mask('씨 11 발'));    // ******
+}</code></pre>
+      </figure>
+    </section>
+
+    <section class="section responsibility" aria-labelledby="responsibility-title">
+      <div class="container responsibility-inner">
+        <p class="section-index">책임 있는 사용 / 07</p>
+        <div>
+          <h2 id="responsibility-title">필터는 판단 <span class="keep-together">보조 수단입니다.</span></h2>
+          <p>이 패키지는 사전 기반 매처이며 완전한 안전 장치나 중재 정책이 아닙니다. 새로운 표기를 놓치거나 무해한 문장을 표시할 수 있습니다. 서비스 대상에 맞춰 결과를 검토하고, 사람에게 영향을 주는 결정에는 이의 제기 경로를 제공하세요.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>korean_profanity</span>
+      <p>오프라인 · 불변 · 동기식 한국어 욕설 필터</p>
+      <a href="https://github.com/beomq/korean-profanity">GitHub에서 소스 확인</a>
+    </div>
+  </footer>
+</body>
+</html>
