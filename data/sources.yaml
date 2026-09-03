@@ -1,0 +1,29 @@
+sources:
+  - id: tanat_slang
+    repository: https://github.com/Tanat05/korean-profanity-resources
+    commit: f5e61ebe3a439ad16797b4bdcb255c1489a7d324
+    path: slang.csv
+    retrieved: 2026-09-03
+    license: UNKNOWN
+    sha256: 1db3fda7acb5cde67a1b928fb020995b1a5c5b12b9e71777c243e113344b8018
+  - id: tanat_lol_2020
+    repository: https://github.com/Tanat05/korean-profanity-resources
+    commit: f5e61ebe3a439ad16797b4bdcb255c1489a7d324
+    path: 리그오브레전드_필터링리스트_2020.txt
+    retrieved: 2026-09-03
+    license: UNKNOWN
+    sha256: 9e92eadf28b38e5f6a50f73f1ad64d184e31a0c55d5594a114eedbb3160201d5
+  - id: xim_regex
+    repository: https://github.com/Xim-ya/korean_profanity_filter
+    commit: 9952105318d1644a2ccf294e875d8b5d62b2bbaa
+    path: lib/src/profanity_filter.dart
+    retrieved: 2026-09-03
+    license: MIT
+    sha256: 971d6e05fb827cf5899d81d2b01cad7493d68f5ae6a2eee12a9cb9882ad58621
+  - id: ldnoobw_ko
+    repository: https://github.com/LDNOOBW/List-of-Dirty-Naughty-Obscene-and-Otherwise-Bad-Words
+    commit: 5faf2ba42d7b1c0977169ec3611df25a3c08eb13
+    path: ko
+    retrieved: 2026-09-03
+    license: CC-BY-4.0
+    sha256: 0dd4b74ffea6e3bb35d658e6d8262b53ee99281eaa48ecb515a2065bfcc7f69d

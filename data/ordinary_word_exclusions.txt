@@ -1,0 +1,5 @@
+# Reviewed candidates excluded from the strict tier due to ordinary usage.
+# Keep this list explicit; never promote a source wholesale.
+시간
+관장
+토토

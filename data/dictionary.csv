@@ -1,0 +1,22 @@
+pattern,canonical,tier,match_mode,source_id,note
+시발,시발,strict,substring,xim_regex,reviewed core expansion of regex root
+씨발,씨발,strict,substring,ldnoobw_ko,listed Korean term
+병신,병신,strict,substring,ldnoobw_ko,listed Korean term
+개새끼,개새끼,strict,substring,ldnoobw_ko,listed Korean term
+새끼,새끼,strict,substring,xim_regex,reviewed regex root
+수간,수간,strict,substring,tanat_slang,project_contract
+쉬발,시발,strict,substring,xim_regex,reviewed regex variant with strict canonical
+씌발,시발,strict,substring,xim_regex,reviewed regex variant with strict canonical
+씨빨,씨발,strict,substring,xim_regex,reviewed regex variant with strict canonical
+ㅅㅂ,시발,strict,literal,xim_regex,reviewed compatibility-jamo root
+^^ㅣ발,시발,strict,literal,xim_regex,reviewed literal evasion of the MIT regex jamo root
+10새끼,10새끼,strict,literal,tanat_lol_2020,project_contract
+18넘,18넘,strict,literal,tanat_lol_2020,project_contract
+10jil,10jil,strict,ascii_word,tanat_lol_2020,project_contract
+fuck,fuck,strict,ascii_word,tanat_slang,project_contract
+ass,ass,strict,ascii_word,tanat_slang,project_contract
+관장,관장,lenient,substring,tanat_slang,ordinary-word collision; opt-in only
+토토,토토,lenient,substring,tanat_slang,ordinary-word collision; opt-in only
+오랄,오랄,lenient,substring,tanat_slang,context-sensitive sexual term; opt-in only
+ㅅㅂ,시발,lenient,choseong,tanat_lol_2020,opt-in derived-choseong match only
+시간,시간,allow,substring,tanat_slang,ordinary word reviewed as allowlist coverage
