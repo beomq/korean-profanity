@@ -4,6 +4,10 @@
 Flutter. It runs directly in your process from an embedded dictionary. There is
 no server call, account, or text upload.
 
+**[Try the live demo](https://beomq.github.io/korean-profanity/)** — it
+imports this package's real strict `KoreanProfanityFilter` API and runs it
+locally in your browser; it is not a reimplementation or a server-backed demo.
+
 ## Install
 
 ```sh
@@ -217,7 +221,7 @@ your own network code is still application behavior that you control.
 
 Measured release evidence for this version:
 
-* Clean package archive: 18-19 KB.
+* Clean package archive: 30-32 KB.
 * Strict AOT delta for a consumer that uses detection and `findAll` only:
   98,496 bytes.
 * Strict AOT delta for a consumer that also retains masking code: 114,912
